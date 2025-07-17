@@ -1,0 +1,348 @@
+openapi: 3.0.0
+info:
+  title: Asset Management API
+  version: 1.0.0
+  description: 'REST API zur Verwaltung von Assets, Benutzern und externen Datenquellen'
+paths:
+  /api/login:
+    post:
+      summary: Benutzer-Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      email:
+                        type: string
+              examples:
+                example:
+                  value:
+                    token: jwt-token-string
+                    user:
+                      id: "64f9e9b2c9c09d0f57f5d6e4"
+                      email: user@example.com
+      tags:
+        - Auth
+
+  /api/register:
+    post:
+      summary: Benutzer registrieren
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        '201':
+          description: Benutzer erfolgreich registriert
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              examples:
+                example:
+                  value:
+                    message: Benutzer erfolgreich registriert
+      tags:
+        - Auth
+
+  /api/me:
+    get:
+      summary: Aktuellen Benutzer abrufen
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  email:
+                    type: string
+        '401':
+          description: Nicht eingeloggt
+        '404':
+          description: Benutzer nicht gefunden
+      tags:
+        - Benutzer
+      security:
+        - BaererAuth: []
+
+    put:
+      summary: Aktuellen Benutzer aktualisieren
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+            example:
+              email: neuername@example.com
+              password: geheim123
+      responses:
+        '200':
+          description: Benutzer erfolgreich aktualisiert
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  email:
+                    type: string
+        '401':
+          description: Nicht eingeloggt
+        '404':
+          description: Benutzer nicht gefunden
+      tags:
+        - Benutzer
+      security:
+        - BaererAuth: []
+
+  /api/assets:
+    get:
+      summary: Alle Assets abrufen
+      responses:
+        '200':
+          description: Liste aller Assets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Asset'
+      tags:
+        - Assets
+      security:
+        - BaererAuth: []
+    post:
+      summary: Neues Asset erstellen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - type
+                - location
+              properties:
+                name:
+                  type: string
+                type:
+                  type: string
+                location:
+                  type: string
+            examples:
+              example:
+                value:
+                  name: Förderband B2
+                  type: Fördertechnik
+                  location: Werk 2
+      responses:
+        '201':
+          description: Asset erstellt
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  id:
+                    type: string
+      tags:
+        - Assets
+      security:
+        - BaererAuth: []
+
+  /api/assets/{id}:
+    parameters:
+      - name: id
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      summary: Details eines Assets anzeigen
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetDetail'
+      tags:
+        - Assets
+      security:
+        - BaererAuth: []
+    put:
+      summary: Asset aktualisieren
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+            examples:
+              example:
+                value:
+                  status: in Reparatur
+      responses:
+        '200':
+          description: Asset aktualisiert
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+      tags:
+        - Assets
+      security:
+        - BaererAuth: []
+    delete:
+      summary: Asset löschen
+      responses:
+        '204':
+          description: Asset gelöscht (No Content)
+      tags:
+        - Assets
+      security:
+        - BaererAuth: []
+
+  /api/assets/{id}/live:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Live-Daten eines Assets (Temp, Vibration, BTC)
+      tags: [Assets]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LiveData'
+        '404':
+          description: Asset nicht gefunden
+      security:
+        - BaererAuth: []
+
+components:
+  schemas:
+    Asset:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+        type:
+          type: string
+        location:
+          type: string
+
+    AssetDetail:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+        historie:
+          type: array
+          items:
+            type: object
+            properties:
+              datum:
+                type: string
+                format: date
+              event:
+                type: string
+
+    LiveData:
+      type: object
+      properties:
+        temperature:
+          type: number
+          nullable: true
+          description: Aktuelle Temperatur am Standort (°C)
+        vibration:
+          type: number
+          nullable: true
+          description: Aktuelle Schwingung mm/s
+        btcUsd:
+          type: number
+          nullable: true
+          description: Bitcoin-Preis in USD
+        timestamp:
+          type: string
+          format: date-time
+          description: ISO-Zeitstempel der Messung
+
+  securitySchemes:
+    BaererAuth:
+      type: http
+      scheme: bearer
