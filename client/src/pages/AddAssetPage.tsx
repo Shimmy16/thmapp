@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAssets } from '../hooks/useAssets';
+import Container from '../components/layout/Container';
 
 export default function AddAssetPage() {
   const { createAsset } = useAssets();
@@ -33,22 +34,13 @@ export default function AddAssetPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-mertens-gray p-4">
-      {/* Optional: Logo wie im LoginPage */}
-      {/* <img
-        src="/Bild.png"
-        alt="Mertens-Logo"
-        className="mb-6 h-40 w-auto drop-shadow-lg"
-      /> */}
+    <Container>
+      <h2 className="mb-4 text-2xl font-bold text-mertens-brand">Neues Asset anlegen</h2>
 
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md space-y-4 rounded-xl bg-white p-8 shadow-xl"
+        className="space-y-4 max-w-md bg-white p-6 rounded-xl shadow-md"
       >
-        <h2 className="text-center text-2xl font-bold text-mertens-brand">
-          Neues Asset anlegen
-        </h2>
-
         {error && (
           <p className="rounded bg-red-100 px-2 py-1 text-sm text-red-700">{error}</p>
         )}
@@ -109,6 +101,6 @@ export default function AddAssetPage() {
           Speichern
         </button>
       </form>
-    </div>
+    </Container>
   );
 }

@@ -1,3 +1,4 @@
+// pages/UserManagementPage.tsx
 import { useState, useEffect } from 'react';
 import ApiService from '../services/ApiService';
 import Container from '../components/layout/Container';
@@ -15,7 +16,6 @@ export default function UserManagementPage() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  // Aktuellen User laden
   useEffect(() => {
     ApiService.get('/me').then(res => {
       setUser(res.data);
@@ -45,7 +45,7 @@ export default function UserManagementPage() {
 
   return (
     <Container>
-      <h2 className="mb-4 text-2xl font-bold">Benutzerprofil</h2>
+      <h2 className="mb-4 text-2xl font-bold text-mertens-brand">Benutzerprofil</h2>
 
       {user ? (
         <form
