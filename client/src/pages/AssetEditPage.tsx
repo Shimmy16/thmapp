@@ -36,7 +36,7 @@ export default function AssetEditPage() {
     }
   };
 
-  const statusOptions = ['in Betrieb', 'in Wartung', 'außer Betrieb'];
+  const statusOptions = ['in Betrieb', 'in Wartung', 'ausser Betrieb'];
 
   return (
     <Container>
