@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - master  # ← Optional: Falls du "master" statt "main" verwendest
 
 jobs:
   fullstack-build:
