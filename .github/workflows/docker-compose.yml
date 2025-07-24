@@ -1,0 +1,31 @@
+name: Fullstack CI mit Docker Compose
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  fullstack-build:
+    name: 🐳 Fullstack Docker Compose Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔁 Checkout Code
+        uses: actions/checkout@v3
+
+      - name: 🐳 Set up Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: 📦 Build & Start Containers (Mongo, Backend, Frontend)
+        run: |
+          docker compose up --build -d
+
+      - name: ⏳ Wait for Services
+        run: |
+          echo "⏱️ Warten bis Backend erreichbar ist..."
+          sleep 15
+          curl --fail http://localhost:5000/api/assets || (echo "❌ Backend nicht erreichbar" && exit 1)
+
+      - name: ✅ Services laufen, Container stoppen
+        run: docker compose down
