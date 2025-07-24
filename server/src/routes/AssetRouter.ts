@@ -1,4 +1,3 @@
-// routes/AssetRouter.ts
 import express from 'express';
 import AssetService from '../services/AssetService';
 const router = express.Router();
