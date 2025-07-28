@@ -4,6 +4,7 @@ import { useAuth } from '../../hooks/useAuth';
 const menu = [
   { to: '/dashboard', label: 'Dashboard', icon: '📊' },
   { to: '/asset/new', label: 'Asset anlegen', icon: '➕' },
+  { to: '/assets-list', label: 'Asset-Liste', icon: '📋' }, // ✅ NEU hinzugefügt
   { to: '/users', label: 'Profilverwaltung', icon: '👤' },
 ];
 
