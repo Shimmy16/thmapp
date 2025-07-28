@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import User from '../models/User';
 import UserRepository from '../repositories/UserRepository';
 
-
 const AuthService = {
   async login(req: Request, res: Response): Promise<void> {
     const user = await UserRepository.findByEmailAndPassword(req.body.email, req.body.password);
@@ -13,7 +12,7 @@ const AuthService = {
 
     const userObj = {
       ...user.toObject(),
-      id: user._id.toString()
+      id: user._id.toString(),
     };
     delete (userObj as any)._id;
 
@@ -38,7 +37,7 @@ const AuthService = {
 
     const userObj = {
       ...user.toObject(),
-      id: user._id.toString()
+      id: user._id.toString(),
     };
     delete (userObj as any)._id;
 
@@ -48,28 +47,44 @@ const AuthService = {
   updateCurrentUser: async (req: Request, res: Response): Promise<any> => {
     const userId = req.headers['x-user-id'] as string;
     if (!userId) {
-      res.status(401).json({ message: 'Nicht eingeloggt' });
-      return;
+      return res.status(401).json({ message: 'Nicht eingeloggt' });
     }
 
-    const { email, password } = req.body;
-    const update: any = {};
-    if (email) update.email = email;
-    if (password) update.password = password;
+    const { email, password, currentPassword } = req.body;
 
-    const user = await User.findByIdAndUpdate(userId, update, { new: true }).select('email');
+    // Benutzer holen
+    const user = await User.findById(userId);
     if (!user) {
-      res.status(404).json({ message: 'Benutzer nicht gefunden' });
-      return;
+      return res.status(404).json({ message: 'Benutzer nicht gefunden' });
     }
+
+    // Wenn Passwort geändert werden soll → aktuelles Passwort prüfen
+    if (password) {
+      if (!currentPassword) {
+        return res.status(400).json({ message: 'Aktuelles Passwort erforderlich' });
+      }
+
+      if (user.password !== currentPassword) {
+        return res.status(401).json({ message: 'Aktuelles Passwort ist falsch' });
+      }
+
+      user.password = password;
+    }
+
+    if (email) {
+      user.email = email;
+    }
+
+    await user.save();
 
     const userObj = {
       ...user.toObject(),
-      id: user._id.toString()
+      id: user._id.toString(),
     };
     delete (userObj as any)._id;
+
     res.json(userObj);
-  }
+  },
 };
 
 export default AuthService;

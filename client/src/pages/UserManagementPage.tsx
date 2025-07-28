@@ -1,4 +1,3 @@
-// pages/UserManagementPage.tsx
 import { useState, useEffect } from 'react';
 import ApiService from '../services/ApiService';
 import Container from '../components/layout/Container';
@@ -11,6 +10,7 @@ interface User {
 export default function UserManagementPage() {
   const [user, setUser] = useState<User | null>(null);
   const [email, setEmail] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
@@ -27,14 +27,25 @@ export default function UserManagementPage() {
     setError(null);
     setMessage('');
 
+    if (password && !currentPassword) {
+      setError('Bitte geben Sie Ihr aktuelles Passwort ein.');
+      return;
+    }
+
     if (password && password !== confirmPassword) {
       setError('Passwörter stimmen nicht überein.');
       return;
     }
 
     try {
-      await ApiService.put('/me', { email, password });
+      await ApiService.put('/me', {
+        email,
+        currentPassword: currentPassword || undefined,
+        password: password || undefined,
+      });
+
       setMessage('Profil erfolgreich aktualisiert.');
+      setCurrentPassword('');
       setPassword('');
       setConfirmPassword('');
     } catch (err) {
@@ -70,6 +81,17 @@ export default function UserManagementPage() {
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Aktuelles Passwort</label>
+            <input
+              type="password"
+              className="w-full rounded border p-2"
+              value={currentPassword}
+              onChange={e => setCurrentPassword(e.target.value)}
+              placeholder="Erforderlich bei Passwortänderung"
             />
           </div>
 
