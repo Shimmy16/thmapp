@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import ApiService from '../services/ApiService';
 import { useAssets } from '../hooks/useAssets';
+import { utils, writeFile } from 'xlsx';
 
 interface Asset {
   id: string;
@@ -12,7 +13,6 @@ interface Asset {
 
 interface LiveData {
   temperature: number | null;
-  vibration: number | null;
   btcUsd: number | null;
   timestamp: string;
 }
@@ -49,6 +49,7 @@ export default function AssetListPage() {
     return () => clearInterval(interval);
   }, []);
 
+  // Löschen-Funktion
   const handleDelete = async (id: string) => {
     if (confirm('Asset wirklich löschen?')) {
       await deleteAsset(id);
@@ -56,11 +57,43 @@ export default function AssetListPage() {
     }
   };
 
+  // 📄 Excel-Export
+  const handleExport = () => {
+    const exportData = assets.map(a => {
+      const live = liveData[a.id];
+      return {
+        Name: a.name,
+        Typ: a.type,
+        Status: a.status,
+        Standort: a.location || '-',
+        Temperatur: live?.temperature ?? '-',
+        'BTC-Preis ($)': live?.btcUsd?.toFixed(0) ?? '-',
+        'Letztes Update': live?.timestamp
+          ? new Date(live.timestamp).toLocaleString()
+          : '-',
+      };
+    });
+
+    const worksheet = utils.json_to_sheet(exportData);
+    const workbook = utils.book_new();
+    utils.book_append_sheet(workbook, worksheet, 'Assets');
+
+    writeFile(workbook, 'assets.xlsx');
+  };
+
   if (loading) return <p className="p-6">Lade …</p>;
 
   return (
     <div className="p-6">
-      <h2 className="mb-4 text-2xl font-bold text-mertens-brand">Alle Assets</h2>
+      <div className="mb-4 flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-mertens-brand">Alle Assets</h2>
+        <button
+          onClick={handleExport}
+          className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700"
+        >
+          📄 Als Excel exportieren
+        </button>
+      </div>
 
       {/* Desktop-Ansicht */}
       <div className="hidden md:block overflow-x-auto rounded-lg shadow">
@@ -86,7 +119,7 @@ export default function AssetListPage() {
                   <td className="px-4 py-2">{asset.location || '-'}</td>
                   <td className="px-4 py-2">
                     {live
-                      ? `Temp: ${live.temperature ?? '-'}°C | BTC: ${live.btcUsd?.toFixed(0) ?? '-'}$`
+                      ? `Temp: ${live.temperature ?? '-'}°C | Preis: ${live.btcUsd?.toFixed(0) ?? '-'}$`
                       : 'Keine Daten'}
                   </td>
                   <td className="px-4 py-2">
