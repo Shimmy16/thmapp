@@ -5,6 +5,7 @@ import { useAssets } from '../../hooks/useAssets';
 interface Props { assets: Asset[] }
 export const AssetTable: React.FC<Props> = ({ assets }) => {
  const { deleteAsset } = useAssets();
+ // Lösch-Handler mit confirm-Dialog
  const handleDelete = (id: string) => {
    if (confirm('Asset wirklich löschen?')) deleteAsset(id);
  };

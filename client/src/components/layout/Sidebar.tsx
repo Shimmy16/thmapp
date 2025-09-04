@@ -2,9 +2,10 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
 const menu = [
+  // Menüeinträge: Pfad, Label, Icon (derzeit Emojis)
   { to: '/dashboard', label: 'Dashboard', icon: '📊' },
   { to: '/asset/new', label: 'Asset anlegen', icon: '➕' },
-  { to: '/assets-list', label: 'Asset-Liste', icon: '📋' }, // ✅ NEU hinzugefügt
+  { to: '/assets-list', label: 'Asset-Liste', icon: '📋' }, 
   { to: '/users', label: 'Profilverwaltung', icon: '👤' },
 ];
 
@@ -12,17 +13,19 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
   const { logout, user } = useAuth();
   const nav = useNavigate();
 
-  if (!user) return null;
-
+  if (!user) return null; // Wenn nicht eingeloggt → keine Sidebar anzeigen
+  // Basis- und Active-Styles für Links
   const base = 'flex items-center gap-3 px-6 py-2 hover:bg-gray-700';
   const active = 'bg-gray-700 font-semibold';
-
+  // Zentrale Navigation, schließt auf Mobile die Sidebar
   const handleNav = (path: string) => {
-    nav(path);
+    nav(path);  // Imperative Navigation
+    // Auf < md schließt die Sidebar nach Navigation
     if (window.innerWidth < 768 && onClose) onClose();
   };
 
   return (
+    // Semantisch korrekt: Sidebar + ARIA für Screenreader
     <aside className="flex h-full w-60 flex-col bg-gray-800 text-gray-200">
       <Link
         to="/dashboard"

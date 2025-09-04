@@ -1,10 +1,10 @@
 interface ModalProps {
- open: boolean;
- onClose: () => void;
- children: React.ReactNode;
+ open: boolean; // Steuert Sichtbarkeit
+ onClose: () => void; // Callback zum Schliessen
+ children: React.ReactNode; // Inhalt des Modals
 }
 export const Modal = ({ open, onClose, children }: ModalProps) => {
- if (!open) return null;
+ if (!open) return null; // Wenn nicht offen, nichts rendern
  return (
 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
 <div className="w-full max-w-lg rounded-lg bg-white p-6 shadow-lg">

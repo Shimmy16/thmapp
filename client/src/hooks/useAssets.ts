@@ -27,7 +27,7 @@ export function useAssets() {
  /* ---------- CRUD ---------- */
  const createAsset = useCallback(
    async (asset: Omit<Asset, 'id'>) => {
-    await ApiService.post('/assets', asset);
+    await ApiService.post('/assets', asset); // Nach Erfolg Liste neu laden, damit neue ID/Serverfelder vorhanden sind
     fetchAssets();
    },
    [fetchAssets]

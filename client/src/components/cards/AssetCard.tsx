@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
 import type { Asset } from '../../hooks/useAssets';
 export const AssetCard: React.FC<{ asset: Asset }> = ({ asset }) => {
+    // Dynamische Badge-Farbe je nach Status
  const badge =
    asset.status === 'in Betrieb'
-     ? 'bg-green-100 text-green-700'
-     : 'bg-red-100 text-red-700';
+     ? 'bg-green-100 text-green-700' // Grün für aktiv
+     : 'bg-red-100 text-red-700'; // Rot für nicht aktiv
  return (
 <Link
      to={`/asset/${asset.id}`}

@@ -3,12 +3,12 @@ import AuthService from '../services/AuthService';
 
 const router = express.Router();
 
-router.post('/login', AuthService.login);
-router.post('/register', AuthService.register);
+router.post('/login', AuthService.login); // Login-Route
+router.post('/register', AuthService.register); // Registrierung eines neuen Users
 
-// Neu hinzugefügt:
-router.get('/me', AuthService.getCurrentUser);
-router.put('/me', AuthService.updateCurrentUser);
+
+router.get('/me', AuthService.getCurrentUser); // Gibt den eingeloggten User zurück
+router.put('/me', AuthService.updateCurrentUser); // Aktualisiert das Profil des eingeloggten Users
 
 
 export default router;

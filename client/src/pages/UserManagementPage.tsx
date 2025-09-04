@@ -8,6 +8,7 @@ interface User {
 }
 
 export default function UserManagementPage() {
+  // State für User und Formularfelder
   const [user, setUser] = useState<User | null>(null);
   const [email, setEmail] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
@@ -15,35 +16,36 @@ export default function UserManagementPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
-
+  // Benutzerdaten beim Laden holen
   useEffect(() => {
     ApiService.get('/me').then(res => {
-      setUser(res.data);
-      setEmail(res.data.email);
+      setUser(res.data);  // User im State speichern
+      setEmail(res.data.email); // E-Mail ins Formular übernehmen
     });
   }, []);
-
+  // Speichern-Handler
   const handleSave = async () => {
     setError(null);
     setMessage('');
-
+    // Wenn Passwort geändert werden soll → aktuelles Passwort muss angegeben werden
     if (password && !currentPassword) {
       setError('Bitte geben Sie Ihr aktuelles Passwort ein.');
       return;
     }
-
+    // Wenn neues Passwort ≠ Bestätigung → Fehler
     if (password && password !== confirmPassword) {
       setError('Passwörter stimmen nicht überein.');
       return;
     }
 
     try {
+      // API-Call zum Aktualisieren des Users
       await ApiService.put('/me', {
         email,
         currentPassword: currentPassword || undefined,
         password: password || undefined,
       });
-
+      // Erfolgsmeldung setzen und Passwortfelder leeren
       setMessage('Profil erfolgreich aktualisiert.');
       setCurrentPassword('');
       setPassword('');
@@ -61,8 +63,8 @@ export default function UserManagementPage() {
       {user ? (
         <form
           onSubmit={e => {
-            e.preventDefault();
-            handleSave();
+            e.preventDefault(); // Standard-Submit verhindern
+            handleSave();       // Speichern aufrufen
           }}
           className="space-y-4 max-w-md bg-white p-6 rounded-xl shadow-md"
         >

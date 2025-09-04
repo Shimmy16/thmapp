@@ -3,7 +3,7 @@ import clsx from 'clsx';
 
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
-
+// Wiederverwendbare Input-Komponente
 export const Input = ({ className, ...props }: InputProps) => (
 <input
 

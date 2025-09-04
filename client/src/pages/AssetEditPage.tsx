@@ -11,25 +11,25 @@ export default function AssetEditPage() {
   const [asset, set] = useState<Omit<Asset, 'id'> | null>(null);
   const [message, setMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
-
+  // Asset-Daten beim Laden der Seite holen
   useEffect(() => {
     ApiService.get<Asset>(`/assets/${id}`).then(r => {
       const { id: _, ...rest } = r.data;
       set(rest);
     });
   }, [id]);
-
+  // Wenn noch keine Asset-Daten geladen sind → Ladeanzeige
   if (!asset) return <p className="p-6">Lade …</p>;
-
+  // Speichern-Handler für das Formular
   const save = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setMessage('');
+    e.preventDefault(); // Standard-Submit verhindern
+    setError(null); // Fehler zurücksetzen
+    setMessage(''); // Nachricht zurücksetzen
 
     try {
-      await ApiService.put(`/assets/${id}`, asset);
-      setMessage('Asset erfolgreich aktualisiert.');
-      nav(-1);
+      await ApiService.put(`/assets/${id}`, asset); // Asset updaten
+      setMessage('Asset erfolgreich aktualisiert.'); // Erfolgsmeldung setzen
+      nav(-1); // zurück navigieren
     } catch (err) {
       console.error(err);
       setError('Fehler beim Speichern.');

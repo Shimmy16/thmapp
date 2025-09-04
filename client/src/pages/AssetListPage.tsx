@@ -18,18 +18,18 @@ interface LiveData {
 }
 
 export default function AssetListPage() {
-  const [assets, setAssets] = useState<Asset[]>([]);
-  const [liveData, setLiveData] = useState<Record<string, LiveData | null>>({});
-  const [loading, setLoading] = useState(true);
-  const { deleteAsset } = useAssets();
+  const [assets, setAssets] = useState<Asset[]>([]); // Liste der Assets
+  const [liveData, setLiveData] = useState<Record<string, LiveData | null>>({}); // Live-Daten pro Asset
+  const [loading, setLoading] = useState(true); // Ladezustand
+  const { deleteAsset } = useAssets(); // Hook mit Delete-Funktion
 
   // Assets + Live-Daten laden
   useEffect(() => {
     const loadAssets = async () => {
       try {
-        const { data } = await ApiService.get<Asset[]>('/assets');
+        const { data } = await ApiService.get<Asset[]>('/assets'); // API-Call für Assets
         setAssets(data);
-
+        // Für jedes Asset Live-Daten laden          
         data.forEach(asset => {
           ApiService.get<LiveData>(`/assets/${asset.id}/live`)
             .then(res =>
@@ -45,19 +45,19 @@ export default function AssetListPage() {
     };
 
     loadAssets();
-    const interval = setInterval(loadAssets, 60_000);
-    return () => clearInterval(interval);
+    const interval = setInterval(loadAssets, 60_000); // alle 60 Sekunden neu laden
+    return () => clearInterval(interval); // Cleanup
   }, []);
 
   // Löschen-Funktion
   const handleDelete = async (id: string) => {
     if (confirm('Asset wirklich löschen?')) {
-      await deleteAsset(id);
-      setAssets(prev => prev.filter(a => a.id !== id));
+      await deleteAsset(id); // API-Löschung
+      setAssets(prev => prev.filter(a => a.id !== id)); // aus lokaler Liste entfernen
     }
   };
 
-  // 📄 Excel-Export
+  // Excel-Export
   const handleExport = () => {
     const exportData = assets.map(a => {
       const live = liveData[a.id];
@@ -73,12 +73,12 @@ export default function AssetListPage() {
           : '-',
       };
     });
-
+    // Excel-Worksheet + Workbook erstellen
     const worksheet = utils.json_to_sheet(exportData);
     const workbook = utils.book_new();
     utils.book_append_sheet(workbook, worksheet, 'Assets');
 
-    writeFile(workbook, 'assets.xlsx');
+    writeFile(workbook, 'assets.xlsx'); // Datei speichern
   };
 
   if (loading) return <p className="p-6">Lade …</p>;

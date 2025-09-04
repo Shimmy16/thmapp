@@ -41,7 +41,7 @@ export default function AppRouter() {
             <Route path="/asset/:id/edit" element={<AssetEditPage />} />
             <Route path="/users" element={<UserManagementPage />} />
 
-            {/* ✅ Neue Route für die Asset-Liste */}
+            {/*  Neue Route für die Asset-Liste */}
             <Route path="/assets-list" element={<AssetListPage />} />
 
             {/* Default innerhalb des AppShell → Dashboard */}

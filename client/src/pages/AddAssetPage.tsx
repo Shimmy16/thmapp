@@ -7,14 +7,14 @@ import Container from '../components/layout/Container';
 export default function AddAssetPage() {
   const { createAsset } = useAssets();
   const navigate = useNavigate();
-
+  // Form-State
   const [form, setForm] = useState({
     name: '',
     type: '',
     location: '',
     status: 'in Betrieb',
   });
-
+  // UI-States
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState('');
 
@@ -24,7 +24,7 @@ export default function AddAssetPage() {
     setMessage('');
 
     try {
-      await createAsset(form);
+      await createAsset(form); // createAsset erwartet Omit<Asset,'id'> → passt zu unserem form
       setMessage('Asset erfolgreich erstellt.');
       navigate('/dashboard');
     } catch (err) {

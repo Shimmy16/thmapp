@@ -4,21 +4,24 @@ const IoTService = {
  async getLiveData(assetId: string) {
    // Stammdaten holen, um Koordinaten zu bekommen
    const asset = await AssetRepository.findById(assetId);
-   const lat = asset?.lat ?? 47.4;   // Fallback: Zürich
+    // Falls keine Koordinaten im Asset vorhanden → Fallback: Zürich
+   const lat = asset?.lat ?? 47.4;   
    const lon = asset?.lon ?? 8.5;
    try {
+          // Open-Meteo API: aktuelle Temperatur abfragen
      const url = 'https://api.open-meteo.com/v1/forecast';
      const { data } = await axios.get(url, {
        params: {
          latitude:  lat,
          longitude: lon,
-         current:   'temperature_2m'
+         current:   'temperature_2m'// Open-Meteo-Parameter für aktuelle Temp.
        }
      });
-     const temperature = data.current.temperature_2m;
+     const temperature = data.current.temperature_2m;  // Extrahiere Temperatur aus API-Response
      // Vibration bleibt vorerst Dummy
      return { temperature, vibration: 0.5 };
    } catch (err) {
+      // Falls API-Request fehlschlägt → loggen + Fallback
      console.error('Open-Meteo-Fetch fehlgeschlagen', err);
      return { temperature: null, vibration: 0.5 };
    }

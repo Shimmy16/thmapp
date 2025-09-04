@@ -3,11 +3,14 @@ import Header from '../layout/Header';
 import Sidebar from '../layout/Sidebar';
 import Footer from '../layout/Footer'; // 👈 Import ergänzt
 
+// AppShell: Umhüllt die ganze App mit Sidebar, Header, Footer
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
+    // Wenn Sidebar offen → Scroll im Body deaktivieren (Mobile UX)
     document.body.style.overflow = open ? 'hidden' : 'auto';
+    // Cleanup, falls Komponente unmounted wird
     return () => {
       document.body.style.overflow = 'auto';
     };

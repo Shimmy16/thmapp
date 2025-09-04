@@ -1,3 +1,4 @@
+// Kleiner Lade-Spinner als SVG
 export const Spinner = () => (
 <svg
    className="h-5 w-5 animate-spin text-blue-600"

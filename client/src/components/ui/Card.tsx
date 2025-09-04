@@ -1,9 +1,9 @@
 import clsx from 'clsx';
 
 interface CardProps {
- title?: string;
- children: React.ReactNode;
- className?: string;
+ title?: string; // Optionaler Titel der Card
+ children: React.ReactNode; // Inhalt der Card
+ className?: string; // Zusätzliche CSS-Klassen
 }
 export const Card = ({ title, children, className }: CardProps) => (
 <div className={clsx('rounded-xl border bg-white p-4 shadow', className)}>
